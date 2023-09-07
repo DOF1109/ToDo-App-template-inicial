@@ -13,6 +13,10 @@ Este proyecto es la oportunidad de repasar todo lo aprendido y poner en práctic
 ## API Docs
 Link con la documentación de los endpoints de la API y su funcionamiento:
 👉 https://ctd-todo-api.herokuapp.com/
+
+El bueno: https://todo-api.ctd.academy/#/users/registerUser
+
+Endpoint bueno: https://todo-api.ctd.academy/v1
     
 
 ## Requerimientos funcionales en pantalla de Login
