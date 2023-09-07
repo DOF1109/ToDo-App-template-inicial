@@ -47,7 +47,7 @@ window.addEventListener('load', function () {
                 location.replace('../mis-tareas.html');
             }
         })
-        .catch()
+        .catch(console.log('Promesa rechazada'))
     };
 
 });
