@@ -15,9 +15,9 @@ window.addEventListener('load', function () {
     /* -------------------------------------------------------------------------- */
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        const setting = {};
+        let setting = {};
 
-        if (password === passwordRepetida) {
+        if (password.value === passwordRepetida.value) {
             const payload = {
                 firstName: nombre.value,
                 lastName: apellido.value,
