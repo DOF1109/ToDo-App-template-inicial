@@ -15,45 +15,43 @@ window.addEventListener('load', function () {
     /* -------------------------------------------------------------------------- */
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        let setting = {};
+        let settings = {};
 
-        if (password.value === passwordRepetida.value) {
-            const payload = {
-                firstName: nombre.value,
-                lastName: apellido.value,
-                email: email.value,
-                password: password.value
-            };
-    
-            setting = {
-                method:'POST',
-                body: JSON.stringify(payload),
-                headers:{
-                    'Content-Type':'application/json'
-                }
+        const payload = {
+            firstName: nombre.value,
+            lastName: apellido.value,
+            email: email.value,
+            password: password.value
+        };
+
+        settings = {
+            method:'POST',
+            body: JSON.stringify(payload),
+            headers:{
+                'Content-Type':'application/json'
             }
-    
-            realizarRegister(setting);
-        } else {
-            alert('Las contraseñas no coinciden');
         }
+
+        realizarRegister(settings);
+
     });
 
     /* -------------------------------------------------------------------------- */
     /*                    FUNCIÓN 2: Realizar el signup [POST]                    */
     /* -------------------------------------------------------------------------- */
     function realizarRegister(settings) {
-        console.log('lanzando la consulta a API');
+        console.log('Consulto a la API');
 
         fetch(`${url}/users`, settings)
         .then(response => {
-            if (!response.ok) alert('Alguno de los datos están incorrectos');
+            if (!response.ok) console.log('Alguno de los datos están incorrectos');
             return response.json();
         })
         .then(data => {
             console.log('Promesa cumplida');
             if (data.jwt) {
-                localStorage.setItem('jwt', JSON.stringify(data.jwt));
+                // localStorage.setItem('jwt', JSON.stringify(data.jwt));
+                localStorage.setItem('jwt', data.jwt);
                 location.replace('../mis-tareas.html');
             }
         })
