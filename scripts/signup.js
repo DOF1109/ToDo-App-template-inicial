@@ -10,6 +10,42 @@ window.addEventListener('load', function () {
 
     const url = 'https://todo-api.ctd.academy/v1';
 
+    const estadoErroresOK = {
+        nombre: false,
+        apellido: false,
+        email: false,
+        password: false
+    };
+
+    function mostrarErrores() {
+        // por cada small mostramos u ocultamos el error
+        estadoErroresOK.nombre ? nombreError.classList.remove('visible') : nombreError.classList.add('visible');
+    
+        estadoErroresOK.apellido ? apellidoError.classList.remove('visible') : apellidoError.classList.add('visible');
+    
+        estadoErroresOK.email ? emailError.classList.remove('visible') : emailError.classList.add('visible');
+    
+        estadoErroresOK.password ? passwordError.classList.remove('visible') : passwordError.classList.add('visible');
+    }
+
+    formulario.addEventListener('change', function () {
+
+        // 👇 actualizo el estado de la pantalla con los datos
+        estadoUsuario.email = inputEmail.value;
+        estadoUsuario.password = inputPassword.value;
+        estadoUsuario.rol = inputRol.value;
+        estadoUsuario.terminos = inputTerminos.checked;
+    
+        // 👇 actualizo el estado del error segun el estado del usuario
+        estadoErroresOK.email = validarEmail(estadoUsuario.email);
+        estadoErroresOK.password = validarPassword(estadoUsuario.password);
+        estadoErroresOK.rol = validarRol(estadoUsuario.rol);
+        estadoErroresOK.terminos = validarTerminos(estadoUsuario.terminos);
+    
+        // finalmente muestro los errores presentes
+        mostrarErrores();
+    });
+
     /* -------------------------------------------------------------------------- */
     /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
     /* -------------------------------------------------------------------------- */
@@ -55,7 +91,7 @@ window.addEventListener('load', function () {
                 location.replace('../mis-tareas.html');
             }
         })
-        .catch(console.log('Promesa rechazada'))
+        .catch(err => console.log('Promesa rechazada'))
     };
 
 });
