@@ -8,7 +8,7 @@ function validarTexto(texto) {
 }
 
 function normalizarTexto(texto) {
-    return (texto.toUpperCasse().trim())
+    return (texto.toUpperCase().trim())
 }
 
 /* ---------------------------------- email --------------------------------- */
@@ -18,7 +18,7 @@ function validarEmail(email) {
 }
 
 function normalizarEmail(email) {
-    return (email.toUpperCasse())
+    return (email.toUpperCase())
 }
 
 /* -------------------------------- password -------------------------------- */

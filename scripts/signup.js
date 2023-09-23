@@ -91,9 +91,9 @@ window.addEventListener('load', function () {
         } else {
             // Creamos el cuerpo de la request
             const payload = {
-                firstName: nombre.value,
-                lastName: apellido.value,
-                email: email.value,
+                firstName: normalizarTexto(nombre.value),
+                lastName: normalizarTexto(apellido.value),
+                email: normalizarEmail(email.value),
                 password: password.value
             };
 

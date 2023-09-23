@@ -52,7 +52,7 @@ window.addEventListener('load', function () {
         } else {
             // Creamos el cuerpo de la request
             const payload = {
-                email: email.value,
+                email: normalizarEmail(email.value),
                 password: password.value
             };
     
