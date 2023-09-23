@@ -1,14 +1,14 @@
 /* ---------------------------------- texto --------------------------------- */
 function validarTexto(texto) {
     // Armo una expresión regular para validar, esta permite
-    // letras mayusculas, minusculas, acentuadas, ü, Ü y
+    // letras mayusculas, minusculas, acentuadas, ü, Ü, ' ' y
     // que al menos sean 3
-    const regExp = /^[a-zA-ZáéíóúÁÉÍÓÚüÜ]{3,}$/
+    const regExp = /^[a-zA-ZáéíóúÁÉÍÓÚüÜ\s]{3,}$/
     return (regExp.test(texto))
 }
 
 function normalizarTexto(texto) {
-    return (texto.toUpperCasse())
+    return (texto.toUpperCasse().trim())
 }
 
 /* ---------------------------------- email --------------------------------- */
@@ -23,7 +23,7 @@ function normalizarEmail(email) {
 
 /* -------------------------------- password -------------------------------- */
 function validarContrasenia(contrasenia) {
-    return (contrasenia.lenght >= 6)
+    return (contrasenia.length >= 6)
 }
 
 function compararContrasenias(contrasenia_1, contrasenia_2) {

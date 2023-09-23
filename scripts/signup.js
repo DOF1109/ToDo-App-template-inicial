@@ -1,97 +1,135 @@
 window.addEventListener('load', function () {
 
-    /* ---------------------- obtenemos variables globales ---------------------- */
+    /* --------------- Obtenemos variables globales --------------- */
     const form = document.forms[0];
-    const nombre = document.querySelector('#inputNombre');
-    const apellido = document.querySelector('#inputApellido');
-    const email = document.querySelector('#inputEmail');
-    const password = document.querySelector('#inputPassword');
-    const passwordRepetida = document.querySelector('#inputPasswordRepetida');
+    const nombre = document.getElementById('inputNombre');
+    const errorNombre = document.getElementById('errorNombre');
+    const apellido = document.getElementById('inputApellido');
+    const errorApellido = document.getElementById('errorApellido');
+    const email = document.getElementById('inputEmail');
+    const errorEmail = document.getElementById('errorEmail');
+    const password = document.getElementById('inputPassword');
+    const errorPassword = document.getElementById('errorPassword');
+    const passwordRepetida = document.getElementById('inputPasswordRepetida');
+    const errorPasswordRepetida = document.getElementById('errorPasswordRepetida');
 
     const url = 'https://todo-api.ctd.academy/v1';
 
-    const estadoErroresOK = {
-        nombre: false,
-        apellido: false,
-        email: false,
-        password: false
-    };
-
-    function mostrarErrores() {
-        // por cada small mostramos u ocultamos el error
-        estadoErroresOK.nombre ? nombreError.classList.remove('visible') : nombreError.classList.add('visible');
-    
-        estadoErroresOK.apellido ? apellidoError.classList.remove('visible') : apellidoError.classList.add('visible');
-    
-        estadoErroresOK.email ? emailError.classList.remove('visible') : emailError.classList.add('visible');
-    
-        estadoErroresOK.password ? passwordError.classList.remove('visible') : passwordError.classList.add('visible');
+    /* --------------- Objeto para almacenar los errores de inputs --------------- */
+    const estadoErrores = {
+        nombreOK: false,
+        apellidoOK: false,
+        emailOK: false,
+        passwordOK: false,
+        passwordRepetidaOK: false
     }
 
-    formulario.addEventListener('change', function () {
+    /* --------------- Mostramos u ocultamos el error --------------- */
+    function mostrarErrorNombre(){
+        (estadoErrores.nombreOK)? errorNombre.classList.add('invisible') : errorNombre.classList.remove('invisible');
+    }
 
-        // 👇 actualizo el estado de la pantalla con los datos
-        estadoUsuario.email = inputEmail.value;
-        estadoUsuario.password = inputPassword.value;
-        estadoUsuario.rol = inputRol.value;
-        estadoUsuario.terminos = inputTerminos.checked;
-    
-        // 👇 actualizo el estado del error segun el estado del usuario
-        estadoErroresOK.email = validarEmail(estadoUsuario.email);
-        estadoErroresOK.password = validarPassword(estadoUsuario.password);
-        estadoErroresOK.rol = validarRol(estadoUsuario.rol);
-        estadoErroresOK.terminos = validarTerminos(estadoUsuario.terminos);
-    
-        // finalmente muestro los errores presentes
-        mostrarErrores();
-    });
+    function mostrarErrorApellido(){
+        (estadoErrores.apellidoOK)? errorApellido.classList.add('invisible') : errorApellido.classList.remove('invisible');
+    }
 
-    /* -------------------------------------------------------------------------- */
-    /*            FUNCIÓN 1: Escuchamos el submit y preparamos el envío           */
-    /* -------------------------------------------------------------------------- */
+    function mostrarErrorEmail(){
+        (estadoErrores.emailOK)? errorEmail.classList.add('invisible') : errorEmail.classList.remove('invisible');
+    }
+
+    function mostrarErrorPassword(){
+        (estadoErrores.passwordOK)? errorPassword.classList.add('invisible') : errorPassword.classList.remove('invisible');
+    }
+
+    function mostrarErrorPasswordRepetida(){
+        (estadoErrores.passwordRepetidaOK)? errorPasswordRepetida.classList.add('invisible') : errorPasswordRepetida.classList.remove('invisible');
+    }
+
+    function existenErrores(){
+        for (let inputOK in estadoErrores) {
+            if (estadoErrores[inputOK] === false) return true;
+        }
+        return false;
+    }
+
+    /* --------------- Validamos los datos mientras se ingresan --------------- */
+    nombre.addEventListener('change', () => {
+        estadoErrores.nombreOK = validarTexto(nombre.value);
+        mostrarErrorNombre();
+    })
+
+    apellido.addEventListener('change', () => {
+        estadoErrores.apellidoOK = validarTexto(apellido.value);
+        mostrarErrorApellido();
+    })
+
+    email.addEventListener('change', () => {
+        estadoErrores.emailOK = validarEmail(email.value);
+        mostrarErrorEmail();
+    })
+
+    password.addEventListener('change', () => {
+        estadoErrores.passwordOK = validarContrasenia(password.value);
+        mostrarErrorPassword();
+    })
+
+    passwordRepetida.addEventListener('change', () => {
+        estadoErrores.passwordRepetidaOK = compararContrasenias(password.value, passwordRepetida.value);
+        mostrarErrorPasswordRepetida();
+    })
+
+    /* --------------- Validamos el submit y preparamos el envío --------------- */
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-        let settings = {};
 
-        const payload = {
-            firstName: nombre.value,
-            lastName: apellido.value,
-            email: email.value,
-            password: password.value
-        };
+        if (existenErrores()) {
+            mostrarErrorNombre()
+            mostrarErrorApellido()
+            mostrarErrorEmail()
+            mostrarErrorPassword()
+            mostrarErrorPasswordRepetida()
+        } else {
+            // Creamos el cuerpo de la request
+            const payload = {
+                firstName: nombre.value,
+                lastName: apellido.value,
+                email: email.value,
+                password: password.value
+            };
 
-        settings = {
-            method:'POST',
-            body: JSON.stringify(payload),
-            headers:{
-                'Content-Type':'application/json'
+            // Configuramos la request del Fetch
+            const settings = {
+                method:'POST',
+                body: JSON.stringify(payload),
+                headers:{
+                    'Content-Type':'application/json'
+                }
             }
+
+            // Lanzamos la consulta de signup a la API
+            realizarRegister(settings);
         }
-
-        realizarRegister(settings);
-
     });
 
-    /* -------------------------------------------------------------------------- */
-    /*                    FUNCIÓN 2: Realizar el signup [POST]                    */
-    /* -------------------------------------------------------------------------- */
+    /* --------------- Realizar el signup [POST] --------------- */
     function realizarRegister(settings) {
-        console.log('Consulto a la API');
+        console.log('Lanzando la consulta a API');
 
         fetch(`${url}/users`, settings)
         .then(response => {
-            if (!response.ok) console.log('Alguno de los datos están incorrectos');
+            if (!response.ok) alert('El usuario ya existe');
             return response.json();
         })
         .then(data => {
             console.log('Promesa cumplida');
             if (data.jwt) {
-                // localStorage.setItem('jwt', JSON.stringify(data.jwt));
-                localStorage.setItem('jwt', data.jwt);
+                localStorage.setItem('jwt', JSON.stringify(data.jwt));
+                // Limpio los campos del formulario
+                form.reset();
                 location.replace('../mis-tareas.html');
             }
         })
-        .catch(err => console.log('Promesa rechazada'))
+        .catch(() => console.log('Promesa rechazada'))
     };
 
 });

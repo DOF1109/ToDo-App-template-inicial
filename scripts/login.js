@@ -5,54 +5,69 @@ window.addEventListener('load', function () {
     const email = document.getElementById('inputEmail');
     const errorEmail = document.getElementById('errorEmail');
     const password = document.getElementById('inputPassword');
-    const errorPassword = document.getElementById('errorEmail');
+    const errorPassword = document.getElementById('errorPassword');
 
     const url = 'https://todo-api.ctd.academy/v1';
 
     /* --------------- Objeto para almacenar los errores de inputs --------------- */
-    estadoErrores = {
+    let estadoErrores = {
         emailOK: false,
         passwordOK: false
     }
-    
-    function mostrarErrores(){
-        (estadoErrores.emailOK)? errorEmail.classList.add('invisible') : errorEmail.classList.remove('invisible');
-        (estadoErrores.passwordOK)? errorEmail.classList.add('invisible') : errorEmail.classList.remove('invisible');
-    }
-    
-    /* --------------- Validamos los datos mientras se ingresan --------------- */
-    form.addEventListener('change', () => {
-        console.log(email.value);
-        estadoErrores.emailOK = validarEmail(email.value);
-        estadoErrores.passwordOK = validarContrasenia(password.value);
 
-        mostrarErrores();
+    /* --------------- Mostramos u ocultamos el error --------------- */
+    function mostrarErrorEmail(){
+        (estadoErrores.emailOK)? errorEmail.classList.add('invisible') : errorEmail.classList.remove('invisible');
+    }
+
+    function mostrarErrorPassword(){
+        (estadoErrores.passwordOK)? errorPassword.classList.add('invisible') : errorPassword.classList.remove('invisible');
+    }
+
+    function existenErrores(){
+        for (let inputOK in estadoErrores) {
+            if (estadoErrores[inputOK] === false) return true;
+        }
+        return false;
+    }
+
+    /* --------------- Validamos los datos mientras se ingresan --------------- */
+    email.addEventListener('change', () => {
+        estadoErrores.emailOK = validarEmail(email.value);
+        mostrarErrorEmail();
     })
 
-    /* --------------- Escuchamos el submit y preparamos el envío --------------- */
+    password.addEventListener('change', () => {
+        estadoErrores.passwordOK = validarContrasenia(password.value);
+        mostrarErrorPassword();
+    })
+
+    /* --------------- Validamos el submit y preparamos el envío --------------- */
     form.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        // Creamos el cuerpo de la request
-        const payload = {
-            email: email.value,
-            password: password.value
-        };
-
-        // Configuramos la request del Fetch
-        const setting = {
-            method:'POST',
-            body: JSON.stringify(payload),
-            headers:{
-                'Content-Type':'application/json'
+        if (existenErrores()) {
+            mostrarErrorEmail()
+            mostrarErrorPassword()
+        } else {
+            // Creamos el cuerpo de la request
+            const payload = {
+                email: email.value,
+                password: password.value
+            };
+    
+            // Configuramos la request del Fetch
+            const setting = {
+                method:'POST',
+                body: JSON.stringify(payload),
+                headers:{
+                    'Content-Type':'application/json'
+                }
             }
+    
+            // Lanzamos la consulta de login a la API
+            realizarLogin(setting);
         }
-
-        // Lanzamos la consulta de login a la API
-        realizarLogin(setting);
-
-        // Limpio los campos del formulario
-        form.reset();
     });
 
     /* --------------- Realizar el login [POST] --------------- */
@@ -61,17 +76,19 @@ window.addEventListener('load', function () {
 
         fetch(`${url}/users/login`, settings)
         .then(response => {
-            if (!response.ok) alert('Alguno de los datos están incorrectos');
+            if (!response.ok) alert('Usuario incorrecto');
             return response.json();
         })
         .then(data => {
             console.log('Promesa cumplida');
             if (data.jwt) {
                 localStorage.setItem('jwt', JSON.stringify(data.jwt));
+                // Limpio los campos del formulario
+                form.reset();
                 location.replace('../mis-tareas.html');
             }
         })
-        .catch(console.log('Promesa rechazada'))
+        .catch(() => console.log('Promesa rechazada'))
     };
 
 });
